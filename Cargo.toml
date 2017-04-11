@@ -1,0 +1,16 @@
+[package]
+name = "line_plot"
+version = "0.1.0"
+authors = ["Joseph Mark <sjeohp@gmail.com>"]
+license = "MIT"
+description = "2d line plot"
+repository = "https://github.com/sjeohp/line_plot.git"
+keywords = ["2d", "line", "plot"]
+
+[lib]
+name = "line_plot"
+path = "src/lib.rs"
+
+[dependencies]
+piston_window = "0.64.0"
+piston2d-graphics = "0.21.1"
