@@ -8,11 +8,14 @@ pub fn plot(
 	x: &[f64], 
 	y: &[f64], 
 	min_x: f64, 
+    max_x: f64, 
 	min_y: f64, 
-	max_x: f64, 
 	max_y: f64) 
 {
-	assert!(min_x < max_x && min_y < max_y);
+	assert!(
+        x.len() == y.len() && 
+        min_x < max_x && 
+        min_y < max_y);
 
     let (window_width, window_height) = (600, 600);
 
@@ -25,7 +28,7 @@ pub fn plot(
             let line = Line::new([0.0, 0.0, 0.0, 1.0], 1.0);
 
             let mut prev: Option<(f64, f64)> = None;
-            for (x, y) in x.into_iter().zip(y.into_iter())
+            for i in 0..x.len()
             {
             	match prev
             	{
@@ -33,8 +36,8 @@ pub fn plot(
             			let coords = [
             				(px - min_x) / (max_x - min_x) * (window_width as f64), 
             				(py - min_y) / (max_y - min_y) * (window_height as f64), 
-            				(x - min_x) / (max_x - min_x) * (window_width as f64), 
-            				(y - min_y) / (max_y - min_y) * (window_height as f64)];
+            				(x[i] - min_x) / (max_x - min_x) * (window_width as f64), 
+            				(y[i] - min_y) / (max_y - min_y) * (window_height as f64)];
             			
             			line.draw(
             			    coords, 
@@ -44,22 +47,11 @@ pub fn plot(
             		}
             		None => {}
             	}
-            	prev = Some((*x, *y));
+            	prev = Some((x[i], y[i]));
             }
         });
     }
 }
-
-// fn main()
-// {
-// 	plot(
-//         &[0.0, 300.0, 300.0, 600.0],
-//         &[0.0, 0.0, 600.0, 600.0],
-// 		0.0, 
-// 		0.0, 
-// 		1200.0,
-// 		1200.0);
-// }
 
 #[cfg(test)]
 mod tests 
