@@ -1,6 +1,6 @@
 [root]
 name = "line_plot"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "gl 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "glhelper 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
