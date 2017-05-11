@@ -1,9 +1,7 @@
 extern crate sdl2;
 extern crate gl;
-extern crate libc;
 extern crate nalgebra;
 extern crate glhelper;
-extern crate time;
 
 use sdl2::video::{GLProfile};
 use sdl2::rect::Rect;
@@ -19,8 +17,6 @@ use std::ptr;
 use std::ffi::CString;
 use std::os::raw::c_void;
 use std::f32::consts;
-
-use time::{PreciseTime};
 
 pub const CAMERA_DELTA: f32 = 0.3;
 

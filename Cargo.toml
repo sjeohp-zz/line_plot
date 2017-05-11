@@ -12,9 +12,7 @@ name = "line_plot"
 path = "src/lib.rs"
 
 [dependencies]
-glhelper = "*"
-sdl2 = "*" #{ version = "*", git = "https://github.com/AngryLawyer/rust-sdl2" }
-nalgebra = "*"
-gl = "*"
-libc = "*"
-time = "*"
+glhelper = "0.1.8"
+sdl2 = "0.29.1"
+nalgebra = "0.12.2"
+gl = "0.6.1"
