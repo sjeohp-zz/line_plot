@@ -113,7 +113,10 @@ pub fn init<F>(
         Err(_) => { 60. }
     }; */
     let mut shaders: Vec<GLuint> = vec![];
-    let line_program = glhelper::load_program("shaders/line.vert.glsl", "shaders/line.frag.glsl", &mut shaders);
+    let line_program = glhelper::load_program(
+        include_str!("../shaders/line.vert.glsl"), 
+        include_str!("../shaders/line.frag.glsl"), 
+        &mut shaders);
     // let line_proj_uni: GLint;
     // let line_view_uni: GLint;
     let line_transform_uni: GLint;
