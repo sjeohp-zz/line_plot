@@ -1,6 +1,6 @@
 [package]
 name = "line_plot"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Joseph Mark <sjeohp@gmail.com>"]
 license = "MIT"
 description = "2d line plot"

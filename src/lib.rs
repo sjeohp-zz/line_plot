@@ -127,6 +127,9 @@ pub fn init<F>(
     let mut line_vao: GLuint = 0;
     let mut line_vbo: GLuint = 0;
 
+    let data = get_data();
+    let mut LINE_DATA: Vec<f32> = vec![0.0; data.values_x.len()*glhelper::STRIDE];
+
     unsafe
     {
         gl::Viewport(0, 0, window_bounds.width() as i32, window_bounds.height() as i32);
@@ -139,7 +142,7 @@ pub fn init<F>(
         gl::BindVertexArray(line_vao);
         gl::GenBuffers(1, &mut line_vbo);
         gl::BindBuffer(gl::ARRAY_BUFFER, line_vbo);
-        gl::BufferData(gl::ARRAY_BUFFER, (glhelper::LINE_DATA.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, mem::transmute(&glhelper::LINE_DATA[0]), gl::DYNAMIC_DRAW);
+        gl::BufferData(gl::ARRAY_BUFFER, (LINE_DATA.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, mem::transmute(&LINE_DATA[0]), gl::DYNAMIC_DRAW);
         // line_proj_uni = gl::GetUniformLocation(line_program, CString::new("proj").unwrap().as_ptr());
         // line_view_uni = gl::GetUniformLocation(line_program, CString::new("view").unwrap().as_ptr());
         line_transform_uni = gl::GetUniformLocation(line_program, CString::new("transform").unwrap().as_ptr());
@@ -254,7 +257,7 @@ pub fn init<F>(
             // gl::UniformMatrix4fv(line_view_uni, 1, gl::FALSE, mem::transmute(&view));
             gl::UniformMatrix4fv(line_transform_uni, 1, gl::FALSE, mem::transmute(&ortho));
             gl::UniformMatrix4fv(line_model_uni, 1, gl::FALSE, mem::transmute(&model));
-            gl::Uniform1f(line_width_uni, 0.005);
+            gl::Uniform1f(line_width_uni, 0.01);
             gl::DrawArrays(gl::TRIANGLE_STRIP, 0, 4*(path.len()-1) as GLint);
             gl::DisableVertexAttribArray(line_position_attr);
             gl::DisableVertexAttribArray(line_normal_attr);
