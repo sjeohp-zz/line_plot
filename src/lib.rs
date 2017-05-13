@@ -17,6 +17,7 @@ use std::ptr;
 use std::ffi::CString;
 use std::os::raw::c_void;
 use std::f32::consts;
+use std::sync::mpsc;
 
 pub const CAMERA_DELTA: f32 = 0.3;
 
@@ -61,13 +62,13 @@ pub struct PlotData
     pub values_y: Vec<f32>
 }
 
-pub fn init<F>(
+pub fn init(
     window_x: i32,
     window_y: i32,
     window_w: u32,
     window_h: u32,
-    get_data: F) -> () 
-    where F: Fn() -> PlotData
+    data_length: usize,
+    rx: mpsc::Receiver<PlotData>) -> () 
 {
     let sdl = sdl2::init().unwrap();
     let video_subsystem = sdl.video().unwrap();
@@ -127,8 +128,14 @@ pub fn init<F>(
     let mut line_vao: GLuint = 0;
     let mut line_vbo: GLuint = 0;
 
-    let data = get_data();
-    let mut LINE_DATA: Vec<f32> = vec![0.0; data.values_x.len()*glhelper::STRIDE];
+    let data = PlotData {
+        axis_x: vec![0.0, 1.0],
+        axis_y: vec![0.0, 1.0],
+        values_x: vec![0.0; data_length],
+        values_y: vec![0.0; data_length]
+    };
+
+    let mut LINE_DATA: Vec<f32> = vec![0.0; data_length*glhelper::STRIDE];
 
     unsafe
     {
@@ -176,29 +183,28 @@ pub fn init<F>(
 
     let ortho: Matrix4<f32> = *Orthographic3::new(
         0.0, 
-        window_w as f32, 
+        1.0, 
         0.0, 
-        window_h as f32, 
+        1.0, 
         0., 
         1000.).as_matrix();
-
-    let aspect: f32 = window_bounds.width() as f32 / window_bounds.height() as f32;
-    let fovy: f32 = deg_to_rad(45.);
-    let near: f32 = 1.;
-    let far: f32 = 1000.;
-    let camera_z: f32 = 100.;
-    let mut focus = Point2::new(0., 0.);
-    let proj: Matrix4<f32> = *Perspective3::new(aspect, fovy, near, far).as_matrix();
-
-    let mut view = look_at(&focus, camera_z);
-
     let mut model: Matrix4<f32>;
+
+    let mut axis_ori_x = data.axis_x[0];
+    let mut axis_ori_y = data.axis_y[0];
+    let mut axis_len_x = data.axis_x.last().unwrap() - data.axis_x[0];
+    let mut axis_len_y = data.axis_y.last().unwrap() - data.axis_y[0];
+    let mut axes = data.axis_x.into_iter().zip(data.axis_y);
+    let mut path = data.values_x.into_iter().zip(data.values_y).map(|(x, y)| ((x - axis_ori_x) / axis_len_x, (y - axis_ori_y) / axis_len_y)).collect::<Vec<(f32, f32)>>();
+    glhelper::add_path_line(
+        &path,
+        path.len()-1,
+        programs[keys[&ProgramKey::Line]],
+        vaos[keys[&ProgramKey::Line]],
+        vbos[keys[&ProgramKey::Line]]);
     
     let mut event_pump = sdl.event_pump().unwrap();
-
-    // let mut restart = false;
     let mut quit = false;
-    // let mut show_menu = false;
 
     'render_loop: while !quit 
     {
@@ -216,30 +222,23 @@ pub fn init<F>(
             }
         }
 
-        let data = get_data();
-
-        let ortho: Matrix4<f32> = *Orthographic3::new(
-            0.0, 
-            1.0, 
-            0.0, 
-            1.0, 
-            0., 
-            1000.).as_matrix();
-
-        let axis_ori_x = data.axis_x[0];
-        let axis_ori_y = data.axis_y[0];
-        let axis_len_x = data.axis_x.last().unwrap() - data.axis_x[0];
-        let axis_len_y = data.axis_y.last().unwrap() - data.axis_y[0];
-
-        let axes = data.axis_x.into_iter().zip(data.axis_y);
-        let path = data.values_x.into_iter().zip(data.values_y).map(|(x, y)| ((x - axis_ori_x) / axis_len_x, (y - axis_ori_y) / axis_len_y)).collect::<Vec<(f32, f32)>>();
-
-        glhelper::add_path_line(
-            &path,
-            path.len()-1,
-            programs[keys[&ProgramKey::Line]],
-            vaos[keys[&ProgramKey::Line]],
-            vbos[keys[&ProgramKey::Line]]);
+        match rx.try_recv() { 
+            Ok(data) => {
+                axis_ori_x = data.axis_x[0];
+                axis_ori_y = data.axis_y[0];
+                axis_len_x = data.axis_x.last().unwrap() - data.axis_x[0];
+                axis_len_y = data.axis_y.last().unwrap() - data.axis_y[0];
+                axes = data.axis_x.into_iter().zip(data.axis_y);
+                path = data.values_x.into_iter().zip(data.values_y).map(|(x, y)| ((x - axis_ori_x) / axis_len_x, (y - axis_ori_y) / axis_len_y)).collect::<Vec<(f32, f32)>>();
+                glhelper::add_path_line(
+                    &path,
+                    path.len()-1,
+                    programs[keys[&ProgramKey::Line]],
+                    vaos[keys[&ProgramKey::Line]],
+                    vbos[keys[&ProgramKey::Line]]);
+            },
+            Err(_) => {}
+        }
 
         unsafe
         {
