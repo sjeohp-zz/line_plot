@@ -8,7 +8,7 @@ out vec4 out_color;
 
 void main() {
 
-	float feather = 0.0;
+	float feather = width/2.0;
 
 	float l = length(f_normal) * width;
 

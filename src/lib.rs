@@ -67,6 +67,7 @@ pub fn init(
     window_y: i32,
     window_w: u32,
     window_h: u32,
+    line_width: f32,
     data_length: usize,
     rx: mpsc::Receiver<PlotData>) -> () 
 {
@@ -256,7 +257,7 @@ pub fn init(
             // gl::UniformMatrix4fv(line_view_uni, 1, gl::FALSE, mem::transmute(&view));
             gl::UniformMatrix4fv(line_transform_uni, 1, gl::FALSE, mem::transmute(&ortho));
             gl::UniformMatrix4fv(line_model_uni, 1, gl::FALSE, mem::transmute(&model));
-            gl::Uniform1f(line_width_uni, 0.01);
+            gl::Uniform1f(line_width_uni, line_width);
             gl::DrawArrays(gl::TRIANGLE_STRIP, 0, 4*(path.len()-1) as GLint);
             gl::DisableVertexAttribArray(line_position_attr);
             gl::DisableVertexAttribArray(line_normal_attr);
