@@ -13,9 +13,6 @@ use gl::types::{GLfloat, GLuint, GLint, GLsizeiptr};
 
 use nalgebra::*;
 
-extern crate num;
-use num::Float;
-
 use std::collections::{HashMap};
 use std::mem;
 use std::ptr;
