@@ -1,6 +1,6 @@
 [package]
 name = "line_plot"
-version = "0.1.6"
+version = "0.1.7"
 authors = ["Joseph Mark <sjeohp@gmail.com>"]
 license = "MIT"
 description = "2d line plot"
@@ -14,5 +14,5 @@ path = "src/lib.rs"
 [dependencies]
 glhelper = "0.1.8"
 sdl2 = "0.29.1"
-nalgebra = "0.12.2"
+nalgebra = "0.12.3"
 gl = "0.6.1"
