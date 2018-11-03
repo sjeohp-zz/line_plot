@@ -14,5 +14,5 @@ path = "src/lib.rs"
 [dependencies]
 glhelper = "0.1.8"
 sdl2 = "0.29.1"
-nalgebra = "0.12.3"
+nalgebra = "0.16.8"
 gl = "0.6.1"
