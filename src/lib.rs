@@ -290,7 +290,7 @@ pub fn render(
         gl::ClearColor(1.0, 1.0, 1.0, 1.0);
         gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-        let model = nalgebra::geometry::IsometryBase::to_homogeneous(&Isometry3::new(
+        let model = nalgebra::geometry::Isometry::to_homogeneous(&Isometry3::new(
             Vector3::new(0., 0., 0.),
             Vector3::new(0., 0., 0.))
         ) * scale_mat_f32(1., 1., 1.);
